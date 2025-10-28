@@ -15,7 +15,7 @@ let chatHistory = [
   {
     role: "assistant",
     content:
-      "Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?",
+      "Hey — I'm your Music Recommender. Tell me your vibe, artist, or a mood and I'll suggest songs, playlists, or artists you might like.",
   },
 ];
 let isProcessing = false;
@@ -36,6 +36,14 @@ userInput.addEventListener("keydown", function (e) {
 
 // Send button click handler
 sendButton.addEventListener("click", sendMessage);
+
+// Allow external example chips to optionally trigger send
+window.useExample = function (text, send = false) {
+  userInput.value = text;
+  userInput.dispatchEvent(new Event('input'));
+  userInput.focus();
+  if (send) sendMessage();
+};
 
 /**
  * Sends a message to the chat API and processes the response
@@ -67,15 +75,15 @@ async function sendMessage() {
   try {
     // Create new assistant response element
     const assistantMessageEl = document.createElement("div");
-    assistantMessageEl.className = "message assistant-message";
-    assistantMessageEl.innerHTML = "<p></p>";
+  assistantMessageEl.className = "message assistant-message";
+  assistantMessageEl.innerHTML = "<p></p>";
     chatMessages.appendChild(assistantMessageEl);
 
     // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     // Send request to API
-    const response = await fetch("/api/chat", {
+  const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
