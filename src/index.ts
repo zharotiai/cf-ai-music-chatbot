@@ -17,6 +17,9 @@ const MODEL_ID = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const SYSTEM_PROMPT =
   "You are a helpful, friendly assistant. Provide concise and accurate responses.";
 
+// Music recommender system prompt (used when client requests persona: 'music')
+const MUSIC_SYSTEM_PROMPT = `You are an expert music recommender assistant. When the user asks for music suggestions, prioritize understanding their mood, genres, artists, tempo, and use-cases (e.g. workout, study, chill, party). Offer short curated recommendations (3-7 items) with a 1-2 sentence reason for each. When appropriate, include metadata for each suggestion such as artist, genres, tempo (bpm), and an energy descriptor (low/medium/high). Ask a single clarifying question if the user's input is ambiguous. Prefer concise, list-style responses and, when asked, return machine-readable JSON if the client requests it.`;
+
 export default {
   /**
    * Main request handler for the Worker
@@ -58,14 +61,26 @@ async function handleChatRequest(
 ): Promise<Response> {
   try {
     // Parse JSON request body
-    const { messages = [] } = (await request.json()) as {
-      messages: ChatMessage[];
+    // Parse body and support optional persona or custom system prompt
+    const body = (await request.json()) as {
+      messages?: ChatMessage[];
+      persona?: string; // e.g. 'music'
+      system?: string; // optional custom system prompt
     };
 
-    // Add system prompt if not present
-    if (!messages.some((msg) => msg.role === "system")) {
-      messages.unshift({ role: "system", content: SYSTEM_PROMPT });
+    const incoming = body.messages ?? [];
+
+    // Determine which system prompt to inject (if no system message supplied)
+    let systemToUse = SYSTEM_PROMPT;
+    if (body.persona === "music") systemToUse = MUSIC_SYSTEM_PROMPT;
+    if (body.system && typeof body.system === "string") systemToUse = body.system;
+
+    // Add system prompt if not already present in messages
+    if (!incoming.some((msg) => msg.role === "system")) {
+      incoming.unshift({ role: "system", content: systemToUse });
     }
+
+    const messages = incoming;
 
     const response = await env.AI.run(
       MODEL_ID,
