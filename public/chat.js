@@ -305,8 +305,18 @@ function renderCandidatesArray(arr) {
     const genres = t.genres && t.genres.length ? `<div class="meta">${escapeHtml((t.genres||[]).join(', '))}</div>` : '';
     const tempo = t.tempo ? `<div class="meta">tempo: ${escapeHtml(String(t.tempo))}</div>` : '';
     const reason = t.reason ? `<div class="reason">${escapeHtml(t.reason)}</div>` : '';
-    return `<li style="margin-bottom:.5rem"><strong>${title}</strong>${artist}${genres}${tempo}${reason}</li>`;
+    return `<li style="margin-bottom:.5rem"><strong>${title}</strong>${artist}${genres}${tempo}${reason}${makeSongLinksHtml(t.title, t.artist)}</li>`;
   }).join('')}</ol>`;
+}
+
+/**
+ * Return an HTML fragment with external search links for a song (Spotify & YouTube).
+ */
+function makeSongLinksHtml(title, artist) {
+  const q = encodeURIComponent(((title || '') + ' ' + (artist || '')).trim());
+  const spotify = `https://open.spotify.com/search/${q}`;
+  const youtube = `https://www.youtube.com/results?search_query=${q}`;
+  return `<div class="track-links" style="margin-top:0.25rem;font-size:0.9rem"><a href="${spotify}" target="_blank" rel="noopener noreferrer">Spotify</a> &middot; <a href="${youtube}" target="_blank" rel="noopener noreferrer">YouTube</a></div>`;
 }
 
 // ---------------------------
@@ -364,7 +374,12 @@ function attachStoryButtons(assistantMessageEl, text) {
     card.style.flexDirection = 'column';
 
     const label = document.createElement('div');
-    label.textContent = `${t.title} — ${t.artist}`;
+  label.textContent = `${t.title} — ${t.artist}`;
+  // add small external links
+  const linksHtml = makeSongLinksHtml(t.title, t.artist);
+  const linksWrapper = document.createElement('div');
+  linksWrapper.innerHTML = linksHtml;
+  linksWrapper.style.marginTop = '0.25rem';
     label.style.fontWeight = '600';
     label.style.marginBottom = '0.4rem';
 
@@ -402,6 +417,7 @@ function attachStoryButtons(assistantMessageEl, text) {
     });
 
     card.appendChild(label);
+  card.appendChild(linksWrapper);
     card.appendChild(btn);
     card.appendChild(content);
     container.appendChild(card);

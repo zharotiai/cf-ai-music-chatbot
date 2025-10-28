@@ -1,4 +1,4 @@
-# 🎵 CF AI Music Chatbot
+# 🎵 AI Music Chatbot deployed on Cloudflare
 
 An **AI-powered music recommender app** built on **Cloudflare’s developer platform**.  
 It allows users to chat naturally with an AI to get personalized music recommendations, powered by LLM reasoning and Cloudflare’s global infrastructure.
