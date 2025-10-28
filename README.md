@@ -1,153 +1,66 @@
-# LLM Chat Application Template
+# 🎵 CF AI Music Chatbot
 
-A simple, ready-to-deploy chat application template powered by Cloudflare Workers AI. This template provides a clean starting point for building AI chat applications with streaming responses.
+An **AI-powered music recommender app** built on **Cloudflare’s developer platform**.  
+It allows users to chat naturally with an AI to get personalized music recommendations, powered by LLM reasoning and Cloudflare’s global infrastructure.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/llm-chat-app-template)
+---
 
-<!-- dash-content-start -->
+## 🚀 Features
 
-## Demo
+- **Conversational Music Recommendations**  
+  Chat with an AI assistant to discover songs, artists, and playlists that match your mood or preferences.  
 
-This template demonstrates how to build an AI-powered chat interface using Cloudflare Workers AI with streaming responses. It features:
+- **LLM Intelligence**  
+  Uses **Llama 3.3** running on **Cloudflare Workers AI** for natural language understanding and generation.  
 
-- Real-time streaming of AI responses using Server-Sent Events (SSE)
-- Easy customization of models and system prompts
-- Support for AI Gateway integration
-- Clean, responsive UI that works on mobile and desktop
+- **Persistent Memory**  
+  Stores recent chat context and user preferences using **Durable Objects**, enabling more personalized interactions over time.  
 
-## Features
+- **Seamless User Interface**  
+  A lightweight chat interface built with **Cloudflare Pages** for real-time interaction and instant responses.  
 
-- 💬 Simple and responsive chat interface
-- ⚡ Server-Sent Events (SSE) for streaming responses
-- 🧠 Powered by Cloudflare Workers AI LLMs
-- 🛠️ Built with TypeScript and Cloudflare Workers
-- 📱 Mobile-friendly design
-- 🔄 Maintains chat history on the client
-- 🔎 Built-in Observability logging
-<!-- dash-content-end -->
+- **Workflow Coordination**  
+  Integrates **Cloudflare Workflows** to manage the pipeline between user input, LLM inference, and recommendation logic.
 
-## Getting Started
+---
 
-### Prerequisites
+## 🧠 How It Works
 
-- [Node.js](https://nodejs.org/) (v18 or newer)
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
-- A Cloudflare account with Workers AI access
+1. The user opens the chat interface on the deployed Cloudflare Pages site.  
+2. User messages are sent to a **Cloudflare Worker**, which coordinates the conversation flow.  
+3. The **Worker** calls **Workers AI** (Llama 3.3) to process the user’s input and generate a music recommendation or response.  
+4. A **Durable Object** maintains session memory, storing past preferences and recent chats for contextual awareness.  
+5. The response is displayed in the chat UI in real time.
 
-### Installation
+---
 
-1. Clone this repository:
+## 💡 Tech Stack
 
-   ```bash
-   git clone https://github.com/cloudflare/templates.git
-   cd templates/llm-chat-app
-   ```
+- **Cloudflare Workers AI** – LLM inference (Llama 3.3)  
+- **Cloudflare Workflows** – Task orchestration  
+- **Cloudflare Durable Objects** – Persistent state and memory  
+- **Cloudflare Pages** – Frontend hosting and real-time chat interface  
 
-2. Install dependencies:
+---
 
-   ```bash
-   npm install
-   ```
+## 🧭 Usage
 
-3. Generate Worker type definitions:
-   ```bash
-   npm run cf-typegen
-   ```
+Visit the deployed app:  
+👉 [cf-ai-music-chatbot.zharotiai.workers.dev](https://cf-ai-music-chatbot.zharotiai.workers.dev/)
 
-### Development
+Type a message like:  
+> “Recommend me a chill playlist for studying.”  
 
-Start a local development server:
+or  
+> “What songs are similar to Daft Punk’s *Get Lucky*?”  
 
+The chatbot will analyze your request, remember your preferences, and return tailored music suggestions.
+
+---
+
+## 🛠️ Local Development
+
+To run locally:
 ```bash
+npm install
 npm run dev
-```
-
-This will start a local server at http://localhost:8787.
-
-Note: Using Workers AI accesses your Cloudflare account even during local development, which will incur usage charges.
-
-### Deployment
-
-Deploy to Cloudflare Workers:
-
-```bash
-npm run deploy
-```
-
-### Monitor
-
-View real-time logs associated with any deployed Worker:
-
-```bash
-npm wrangler tail
-```
-
-## Project Structure
-
-```
-/
-├── public/             # Static assets
-│   ├── index.html      # Chat UI HTML
-│   └── chat.js         # Chat UI frontend script
-├── src/
-│   ├── index.ts        # Main Worker entry point
-│   └── types.ts        # TypeScript type definitions
-├── test/               # Test files
-├── wrangler.jsonc      # Cloudflare Worker configuration
-├── tsconfig.json       # TypeScript configuration
-└── README.md           # This documentation
-```
-
-## How It Works
-
-### Backend
-
-The backend is built with Cloudflare Workers and uses the Workers AI platform to generate responses. The main components are:
-
-1. **API Endpoint** (`/api/chat`): Accepts POST requests with chat messages and streams responses
-2. **Streaming**: Uses Server-Sent Events (SSE) for real-time streaming of AI responses
-3. **Workers AI Binding**: Connects to Cloudflare's AI service via the Workers AI binding
-
-### Frontend
-
-The frontend is a simple HTML/CSS/JavaScript application that:
-
-1. Presents a chat interface
-2. Sends user messages to the API
-3. Processes streaming responses in real-time
-4. Maintains chat history on the client side
-
-## Customization
-
-### Changing the Model
-
-To use a different AI model, update the `MODEL_ID` constant in `src/index.ts`. You can find available models in the [Cloudflare Workers AI documentation](https://developers.cloudflare.com/workers-ai/models/).
-
-### Using AI Gateway
-
-The template includes commented code for AI Gateway integration, which provides additional capabilities like rate limiting, caching, and analytics.
-
-To enable AI Gateway:
-
-1. [Create an AI Gateway](https://dash.cloudflare.com/?to=/:account/ai/ai-gateway) in your Cloudflare dashboard
-2. Uncomment the gateway configuration in `src/index.ts`
-3. Replace `YOUR_GATEWAY_ID` with your actual AI Gateway ID
-4. Configure other gateway options as needed:
-   - `skipCache`: Set to `true` to bypass gateway caching
-   - `cacheTtl`: Set the cache time-to-live in seconds
-
-Learn more about [AI Gateway](https://developers.cloudflare.com/ai-gateway/).
-
-### Modifying the System Prompt
-
-The default system prompt can be changed by updating the `SYSTEM_PROMPT` constant in `src/index.ts`.
-
-### Styling
-
-The UI styling is contained in the `<style>` section of `public/index.html`. You can modify the CSS variables at the top to quickly change the color scheme.
-
-## Resources
-
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Cloudflare Workers AI Documentation](https://developers.cloudflare.com/workers-ai/)
-- [Workers AI Models](https://developers.cloudflare.com/workers-ai/models/)
